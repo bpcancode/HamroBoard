@@ -39,6 +39,9 @@ export class AuthService {
     // Note: This becomes signInWithOTP() in the next version!
     return this.supabase.auth.signInWithOtp({
       email,
+      options: {
+        emailRedirectTo: 'http://hamro-board.vercel.app',
+      },
     });
   }
 
