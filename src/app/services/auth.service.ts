@@ -36,7 +36,6 @@ export class AuthService {
   }
 
   signInWithEmail(email: string) {
-    // Note: This becomes signInWithOTP() in the next version!
     return this.supabase.auth.signInWithOtp({
       email,
 
