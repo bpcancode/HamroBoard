@@ -33,7 +33,6 @@ export class DataService {
     return boards.data || [];
   }
 
-  // CRUD Board
   async getBoardInfo(boardId: string) {
     return await this.supabase
       .from(BOARDS_TABLE)
@@ -56,7 +55,6 @@ export class DataService {
       .match({ id: board.id });
   }
 
-  // CRUD Lists
   async getBoardLists(boardId: string) {
     const lists = await this.supabase
       .from(LISTS_TABLE)
@@ -89,7 +87,6 @@ export class DataService {
       .match({ id: list.id });
   }
 
-  // CRUD Cards
   async addListCard(listId: string, boardId: string, position = 0) {
     return await this.supabase
       .from(CARDS_TABLE)
@@ -122,7 +119,6 @@ export class DataService {
       .match({ id: card.id });
   }
 
-  // Invite others
   async addUserToBoard(boardId: string, email: string) {
     const user = await this.supabase
       .from(USERS_TABLE)
@@ -163,7 +159,6 @@ export class DataService {
       )
       .subscribe();
 
-    // Return the observable and provide a method to unsubscribe
     return {
       changes: changes.asObservable(),
       unsubscribe: () => {
