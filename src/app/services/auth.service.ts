@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
@@ -7,12 +7,12 @@ import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnInit {
+export class AuthService {
   private supabase: SupabaseClient;
   private _currentUser: BehaviorSubject<boolean | User | any> =
     new BehaviorSubject(null);
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private ngZone: NgZone) {
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
@@ -23,20 +23,16 @@ export class AuthService implements OnInit {
         this._currentUser.next(session!.user);
       } else {
         this._currentUser.next(false);
-        this.router.navigateByUrl('/', { replaceUrl: true });
+        this.ngZone.run(() => {
+          this.router.navigateByUrl('/', { replaceUrl: true });
+        });
       }
     });
   }
 
-  async ngOnInit(): Promise<void> {
-    // Manually load user session once on page load
-    // Note: This becomes a promise with getUser() in the next version!
+  async init() {
     const user = await this.supabase.auth.getUser();
-    if (user) {
-      this._currentUser.next(user);
-    } else {
-      this._currentUser.next(false);
-    }
+    this._currentUser.next(user || false);
   }
 
   signInWithEmail(email: string) {
