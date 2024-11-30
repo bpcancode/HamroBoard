@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject } from 'rxjs';
@@ -12,7 +12,7 @@ export class AuthService {
   private _currentUser: BehaviorSubject<boolean | User | any> =
     new BehaviorSubject(null);
 
-  constructor(private router: Router, private ngZone: NgZone) {
+  constructor(private router: Router) {
     this.supabase = createClient(
       environment.supabaseUrl,
       environment.supabaseKey
@@ -23,15 +23,14 @@ export class AuthService {
         this._currentUser.next(session!.user);
       } else {
         this._currentUser.next(false);
-        this.ngZone.run(() => {
-          this.router.navigateByUrl('/', { replaceUrl: true });
-        });
+        this.router.navigateByUrl('/', { replaceUrl: true });
       }
     });
   }
 
   async init() {
     const user = await this.supabase.auth.getUser();
+    console.log(user);
     this._currentUser.next(user || false);
   }
 
